@@ -6,8 +6,11 @@ var energy_drink,energy_drink_img;
 var path,road;
 var power;
 var man,john;
-var coin_group,obstacle_group;
+var coin_group,obstacle_group,energy_group;
 var score_coin = 0;
+var coin_arr = [];
+
+
 
 function preload(){
   //pre-load images
@@ -20,6 +23,7 @@ function preload(){
   energy_drink_img = loadImage('energyDrink.png');
   coin_group = createGroup();
   obstacle_group = createGroup();
+  energy_group = createGroup();
 
 
 
@@ -61,16 +65,24 @@ function draw() {
 
   spawn_obstacles();
   spawn_coin();
+  spawn_energy_drink();
 
-  if(coin_group.isTouching(obstacle_group)){ //to prevent overlapping use isTouching
+  if(coin_group.isTouching(obstacle_group)){ //to prevent overlapping with obstacle and coin
     coin.remove();
   }
 
+  if(energy_group.isTouching(obstacle_group)){ //to prevent overlapping with obstacle and energy drink
+    energy_drink.remove();
+  }
+
+  if(energy_group.isTouching(coin_group)){ //to prevent overlapping with coin and energy drink
+    energy_drink.remove();
+  }
+
   if(john.isTouching(coin_group)){
-    coin.destroy();
+    collect_coin();
     score_coin += 1;
     console.log(score_coin);
-    
   }
 
   drawSprites();
@@ -122,6 +134,7 @@ function spawn_obstacles(){
   }
 }
 var coin_x;
+
 function spawn_coin(){
   if(frameCount % 80 == 0){
     coin_x = Math.round(random(1,3));
@@ -142,9 +155,42 @@ function spawn_coin(){
   
   coin = createSprite(coin_x,0);
   coin_group.add(coin);
+  coin_arr.push(coin);
   coin.addImage(coin_img);
   coin.velocityY = 2;
   coin.scale = 0.45;
   }
   
+}
+var energy_x;
+function spawn_energy_drink(){
+  if(frameCount % 300 == 0){
+    energy_x = Math.round(random(1,3));
+    switch(energy_x){
+      case 1 :
+        energy_x = 90;
+        break;
+      case 2 :
+        energy_x = 200;
+        break;
+      case 3 :
+        energy_x = 310;
+        break;
+      default :
+        break;
+    }
+
+    energy_drink = createSprite(energy_x,-10);
+    energy_group.add(energy_drink);
+    energy_drink.addImage(energy_drink_img);
+    energy_drink.velocityY = 2;
+    energy_drink.scale = 0.15;
+  }
+}
+
+function collect_coin(){
+  for(var a = 0;a < coin_arr.length;a++){
+    coin_arr[a].remove();
+    coin_arr.splice(a , 1);
+  }
 }
