@@ -9,6 +9,7 @@ var man,john;
 var coin_group,obstacle_group,energy_group;
 var score_coin = 0;
 var coin_arr = [];
+var energy_arr=[];
 
 
 
@@ -50,6 +51,11 @@ function setup(){
 
 function draw() {
   background(0);
+  fill("white");
+  textSize(20);
+  
+
+
   if(road.y > 400){
     road.y = 200;
   }
@@ -85,12 +91,22 @@ function draw() {
     console.log(score_coin);
   }
 
-  drawSprites();
+  if(john.isTouching(energy_group)){
+    collect_energy();    
+    
+  }
+
+
+
 
   
+  drawSprites();
+
+  text("Score : "+score_coin, 270,45);
 
 }
 var obstacle_x;
+
 function spawn_obstacles(){
 
   if(frameCount % 200 == 0){
@@ -109,7 +125,7 @@ function spawn_obstacles(){
         break;
     }
 
-    obstacle = createSprite(obstacle_x,0);
+    obstacle = createSprite(obstacle_x,-10);
     obstacle_group.add(obstacle);
 
     obstacle.velocityY = 2;
@@ -153,7 +169,7 @@ function spawn_coin(){
     }
 
   
-  coin = createSprite(coin_x,0);
+  coin = createSprite(coin_x,-10);
   coin_group.add(coin);
   coin_arr.push(coin);
   coin.addImage(coin_img);
@@ -182,6 +198,7 @@ function spawn_energy_drink(){
 
     energy_drink = createSprite(energy_x,-10);
     energy_group.add(energy_drink);
+    energy_arr.push(energy_drink);
     energy_drink.addImage(energy_drink_img);
     energy_drink.velocityY = 2;
     energy_drink.scale = 0.15;
@@ -194,3 +211,11 @@ function collect_coin(){
     coin_arr.splice(a , 1);
   }
 }
+
+function collect_energy(){
+  for(var b = 0;b < energy_arr.length;b++){
+    energy_arr[b].remove();
+    energy_arr.splice(b,1);
+  }
+}
+
